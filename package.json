@@ -1,0 +1,20 @@
+{
+  "name": "fnr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fast-xml-parser": "^4.5.1",
+    "lodash": "^4.17.21",
+    "replace-in-file": "^8.3.0",
+    "uuid": "^11.0.5",
+    "xml2js": "^0.6.2"
+  }
+}
