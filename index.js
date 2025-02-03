@@ -5,15 +5,14 @@ import parser from "xml2js";
 import { v4 as uuidv4 } from "uuid";
 import { replaceInFile } from "replace-in-file";
 
-const filenames = [
-  "./files/BackgroundGoals.tbl",
-  "./files/Act1_HistoriesOccupationsGoals.txt",
-  "./files/Act2_HistoriesOccupationsGoals.txt",
-  "./files/Act3_HistoriesOccupationsGoals.txt",
-  "./files/Global_HistoriesOccupationsGoals.txt",
-];
+let filenames = [];
 
 const GetBaseUUIDS = async () => {
+  if (!filenames.includes("BackgroundGoals.tbl"))
+    throw new Error(
+      "No table directory found. Place BackgroundGoals.tbl in files directory."
+    );
+
   const data = await fs.readFile("./files/BackgroundGoals.tbl");
   const result = await parser.parseStringPromise(data);
 
@@ -86,24 +85,38 @@ const GenerateAndReplace = async (duplicates) => {
   }
 
   fs.writeFile(
-    "./output/results.txt",
+    "./output/UUIDChangeResults.txt",
     JSON.stringify(all_results),
     { flag: "a+" },
     (err) => {}
   );
 };
 
-(async () => {
-  const uuids = await GetBaseUUIDS();
-
-  const duplicates = [];
-
-  for (let i = 0; i < filenames.length; i++) {
-    const arr = await GetValidUUIDs(filenames[i], uuids);
-    duplicates.push(...arr);
+const ClearOutputFile = async () => {
+  try {
+    await fs.writeFile("./output/UUIDChangeResults.txt", "");
+    console.log("Output file cleared.");
+  } catch (err) {
+    console.log(err.message);
   }
+};
 
-  GenerateAndReplace(duplicates);
+(async () => {
+  try {
+    await ClearOutputFile();
+    filenames = await fs.readdir("./files");
 
-  //   console.log(duplicates);
+    const uuids = await GetBaseUUIDS();
+
+    const duplicates = [];
+
+    for (let i = 0; i < filenames.length; i++) {
+      const arr = await GetValidUUIDs(filenames[i], uuids);
+      duplicates.push(...arr);
+    }
+
+    GenerateAndReplace(duplicates);
+  } catch (err) {
+    console.error(err.message);
+  }
 })();

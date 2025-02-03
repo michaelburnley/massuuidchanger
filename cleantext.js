@@ -1,8 +1,6 @@
 import { promises as fs } from "fs";
 import _ from "lodash";
-import util from "util";
 import parser from "xml2js";
-import { v4 as uuidv4 } from "uuid";
 import { replaceInFile } from "replace-in-file";
 
 const MapIDsandText = async () => {
@@ -10,11 +8,6 @@ const MapIDsandText = async () => {
   const results = await parser.parseStringPromise(data);
 
   const content = results.contentList.content;
-
-  const test = {
-    text: "A Noble Endeavour",
-    ids: [],
-  };
 
   const arr = _.map(content, (item) => ({
     text: item["_"],
@@ -102,7 +95,7 @@ const ChangeUUIDS = async (bad_ids, correct_ids) => {
     }
   }
   fs.writeFile(
-    "./output/results.txt",
+    "./output/RestoreHandlesOutput.txt",
     JSON.stringify(all_results),
     { flag: "a+" },
     (err) => {}
@@ -110,8 +103,12 @@ const ChangeUUIDS = async (bad_ids, correct_ids) => {
 };
 
 (async () => {
-  const items = await MapIDsandText();
-  const correct_ids = await FindCorrectUUID(items);
+  try {
+    const items = await MapIDsandText();
+    const correct_ids = await FindCorrectUUID(items);
 
-  await ChangeUUIDS(items, correct_ids);
+    await ChangeUUIDS(items, correct_ids);
+  } catch (err) {
+    console.log(err.message);
+  }
 })();
