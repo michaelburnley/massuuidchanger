@@ -1,5 +1,9 @@
 # Mass Changing UUID Tool
 
+## Notes
+
+- You can remove the `empty.txt` file in the `files` folder. It was just there to get github to create the folder.
+
 ## Changing Background Goal UUIDS
 
 - Open folder in VSCode
